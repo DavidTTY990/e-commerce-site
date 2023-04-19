@@ -56,9 +56,11 @@ export default {
       // vue-axios 的用法
       this.$http.post(api, this.user)
         .then((res) => {
-          const { token, expired } = res.data;
-          document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
-          console.log(res);
+          if (res.data.success) {
+            const { token, expired } = res.data;
+            document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
+            this.$router.push('/dashboardpage');
+          }
         });
     },
   },
