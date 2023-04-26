@@ -1,4 +1,5 @@
 <template>
+  <loadingEffect :active="isLoading"></loadingEffect>
   <div class="container-fluid">
     <div class="text-end">
       <button class="btn btn-primary" type="button" @click="openModal(true)">新增一個商品</button>
@@ -62,6 +63,7 @@ export default {
       pagination: {},
       tempProduct: {},
       isNew: false,
+      isLoading: false,
     };
   },
   components: {
@@ -71,8 +73,10 @@ export default {
   methods: {
     getProducts() {
       const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products`;
+      this.isLoading = true;
       // vue-axios 的用法
       this.$http.get(api).then((res) => {
+        this.isLoading = false;
         // console.log(res.data);
         if (res.data.success) {
           // console.log(res.data);
