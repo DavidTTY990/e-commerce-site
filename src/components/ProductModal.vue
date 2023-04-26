@@ -63,7 +63,6 @@
                     placeholder="請輸入標題" v-model="tempProduct.title">
             </label>
           </div>
-
           <div class="row gx-2">
             <div class="mb-3 col-md-6">
               <label for="category" class="form-label">分類
@@ -138,7 +137,7 @@
 </template>
 
 <script>
-import Modal from 'bootstrap/js/dist/modal';
+import modalMixin from '@/mixins/modalMixin';
 
 export default {
   props: {
@@ -154,12 +153,6 @@ export default {
     };
   },
   methods: {
-    showModal() {
-      this.modal.show();
-    },
-    hideModal() {
-      this.modal.hide();
-    },
     uploadFile() {
       const uploadedFile = this.$refs.fileInput.files[0];
       const formData = new FormData();
@@ -178,8 +171,6 @@ export default {
       this.tempProduct = this.product;
     },
   },
-  mounted() {
-    this.modal = new Modal(this.$refs.modal);
-  },
+  mixins: [modalMixin],
 };
 </script>
