@@ -18,7 +18,6 @@ export default {
     // vue-axios 的用法
     // 這邊可以把 this.user 省略，因為不再需要打用戶資訊出去了
     this.$http.post(api).then((res) => {
-      console.log(res);
       if (!res.data.success) {
         this.$router.push('/loginpage');
       }

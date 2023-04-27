@@ -77,9 +77,7 @@ export default {
       // vue-axios 的用法
       this.$http.get(api).then((res) => {
         this.isLoading = false;
-        // console.log(res.data);
         if (res.data.success) {
-          // console.log(res.data);
           this.products = res.data.products;
           this.pagination = res.data.pagination;
         }
