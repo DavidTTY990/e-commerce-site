@@ -1,15 +1,25 @@
 <template>
   <Navbar></Navbar>
-<router-view/>
-
+  <router-view />
+  <div class="container-fluid mt-3 position-relative">
+    <ToastAlertList></ToastAlertList>
+  </div>
 </template>
 
 <script>
+import emitter from '@/methods/emitter';
+import ToastAlertList from '@/components/ToastAlertList.vue';
 import Navbar from '../components/NavBar.vue';
 
 export default {
   components: {
     Navbar,
+    ToastAlertList,
+  },
+  provide() {
+    return {
+      emitter,
+    };
   },
   created() {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/, '$1');
@@ -21,6 +31,10 @@ export default {
       if (!res.data.success) {
         this.$router.push('/loginpage');
       }
+      emitter.emit('push-message', {
+        style: 'success',
+        title: '登入成功',
+      });
     });
   },
 };

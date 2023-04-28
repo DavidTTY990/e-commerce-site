@@ -37,22 +37,30 @@
               >
                 編輯
               </button>
-              <button class="btn btn-outline-danger btn-sm" @click="openDelProductModal">刪除</button>
+              <button class="btn btn-outline-danger btn-sm" @click="openDelProductModal">
+                刪除
+              </button>
             </div>
           </td>
         </tr>
       </tbody>
     </table>
+    <PaginationBtn :pages="pagination" @emit-pages="getProducts"></PaginationBtn>
     <ProductModal
       ref="productModal"
       :product="tempProduct"
       @update-product="updateProduct"
     ></ProductModal>
-    <DelProductModal :item="tempProduct" ref="delProductModal" @del-item="delProduct" />
+    <DelProductModal
+      :item="tempProduct"
+      ref="delProductModal"
+      @del-item="delProduct"
+    ></DelProductModal>
   </div>
 </template>
 
 <script>
+import PaginationBtn from '@/components/PaginationBtn.vue';
 import ProductModal from '@/components/ProductModal.vue';
 import DelProductModal from '@/components/DelProductModal.vue';
 
@@ -69,10 +77,12 @@ export default {
   components: {
     ProductModal,
     DelProductModal,
+    PaginationBtn,
   },
+  inject: ['emitter'],
   methods: {
-    getProducts() {
-      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products`;
+    getProducts(page = 1) {
+      const api = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/products/?page=${page}`;
       this.isLoading = true;
       // vue-axios 的用法
       this.$http.get(api).then((res) => {
@@ -108,17 +118,31 @@ export default {
       this.$http[httpMethod](api, { data: this.tempProduct }).then((response) => {
         console.log(response);
         productComponent.hideModal();
-        this.getProducts();
+        if (response.data.success) {
+          this.getProducts();
+          this.emitter.emit('push-message', {
+            style: 'success',
+            title: '更新成功',
+          });
+        } else {
+          this.emitter.emit('push-message', {
+            style: 'danger',
+            title: '更新失敗',
+            content: response.data.message.join('、'),
+          });
+        }
       });
     },
     openDelProductModal(item) {
       this.tempProduct = { ...item };
+      console.log(item.id);
       const delComponent = this.$refs.delProductModal;
       delComponent.showModal();
     },
     delProduct() {
       const url = `${process.env.VUE_APP_API}api/${process.env.VUE_APP_PATH}/admin/product/${this.tempProduct.id}`;
       this.$http.delete(url).then((response) => {
+        console.log(this.tempProduct);
         console.log(response.data);
         const delComponent = this.$refs.delProductModal;
         delComponent.hideModal();
